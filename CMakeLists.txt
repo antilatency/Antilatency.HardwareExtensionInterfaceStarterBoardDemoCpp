@@ -11,11 +11,19 @@ endif()
 
 project ("Antilatency.HardwareExtensionInterfaceStarterBoardDemoCpp")
 
+include_directories(${CMAKE_SOURCE_DIR}/AntilatencySDK/Api)
+
 # Add source to this project's executable.
 add_executable (Antilatency.HardwareExtensionInterfaceStarterBoardDemoCpp "main.cpp")
+
+if (WIN32)
+    file(GLOB ANTILATENCY_LIBS ${CMAKE_SOURCE_DIR}/AntilatencySdk/Bin/WindowsDesktop/x64/*.dll)
+endif (WIN32)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Antilatency.HardwareExtensionInterfaceStarterBoardDemoCpp PROPERTY CXX_STANDARD 20)
 endif()
 
+add_custom_command(TARGET Antilatency.HardwareExtensionInterfaceStarterBoardDemoCpp POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ANTILATENCY_LIBS} $<TARGET_FILE_DIR:Antilatency.HardwareExtensionInterfaceStarterBoardDemoCpp>)
 # TODO: Add tests and install targets if needed.
