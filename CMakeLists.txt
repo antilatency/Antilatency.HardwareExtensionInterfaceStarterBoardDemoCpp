@@ -19,6 +19,21 @@ add_executable (Antilatency.HardwareExtensionInterfaceStarterBoardDemoCpp "main.
 if (WIN32)
     file(GLOB ANTILATENCY_LIBS ${CMAKE_SOURCE_DIR}/AntilatencySdk/Bin/WindowsDesktop/x64/*.dll)
 endif (WIN32)
+if (UNIX)
+    target_link_libraries(Antilatency.HardwareExtensionInterfaceStarterBoardDemoCpp dl stdc++fs pthread)
+
+    EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
+    message( STATUS "Architecture: ${ARCHITECTURE}" )
+
+    if( ${ARCHITECTURE} STREQUAL "aarch64" )
+        file(GLOB ANTILATENCY_LIBS ${CMAKE_SOURCE_DIR}/AntilatencySdk/Bin/Linux/aarch64_linux_gnu/*.so)
+    elseif( ${ARCHITECTURE} STREQUAL "armv7l" )
+        file(GLOB ANTILATENCY_LIBS ${CMAKE_SOURCE_DIR}/AntilatencySdk/Bin/Linux/arm_linux_gnueabihf/*.so)
+    elseif( ${ARCHITECTURE} STREQUAL "x86_64" )
+        file(GLOB ANTILATENCY_LIBS ${CMAKE_SOURCE_DIR}/AntilatencySdk/Bin/Linux/x86_64/*.so)
+    endif()
+
+endif (UNIX)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Antilatency.HardwareExtensionInterfaceStarterBoardDemoCpp PROPERTY CXX_STANDARD 20)
