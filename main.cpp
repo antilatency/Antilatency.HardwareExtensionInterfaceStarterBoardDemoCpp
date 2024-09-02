@@ -9,8 +9,8 @@
 #include <Antilatency.HardwareExtensionInterface.Interop.h>
 
 enum class Sides {
-    TOP,
-    BOTTOM,
+    Top,
+    Bottom,
     NoConnection,
     ShortCircuit
 };
@@ -29,7 +29,7 @@ Sides SideCheck(Antilatency::HardwareExtensionInterface::ICotask cotask) {
     auto button1 = cotask.createInputPin(Antilatency::HardwareExtensionInterface::Interop::Pins::IO1);
     auto button2 = cotask.createInputPin(Antilatency::HardwareExtensionInterface::Interop::Pins::IO6);
     cotask.run();
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
     auto state1 = button1.getState();
     auto state2 = button2.getState();
@@ -39,12 +39,12 @@ Sides SideCheck(Antilatency::HardwareExtensionInterface::ICotask cotask) {
         return Sides::ShortCircuit;
     }
     if (state1 == Antilatency::HardwareExtensionInterface::Interop::PinState::Low && state2 == Antilatency::HardwareExtensionInterface::Interop::PinState::High) {
-        std::cout << "Side: TOP" << std::endl;
-        return Sides::TOP;
+        std::cout << "Side: Top" << std::endl;
+        return Sides::Top;
     }
     if (state1 == Antilatency::HardwareExtensionInterface::Interop::PinState::High && state2 == Antilatency::HardwareExtensionInterface::Interop::PinState::Low) {
-        std::cout << "Side: BOTTOM" << std::endl;
-        return Sides::BOTTOM;
+        std::cout << "Side: Bottom" << std::endl;
+        return Sides::Bottom;
     }
     if (state1 == Antilatency::HardwareExtensionInterface::Interop::PinState::High && state2 == Antilatency::HardwareExtensionInterface::Interop::PinState::High) {
         std::cout << "No Connection" << std::endl;
@@ -55,8 +55,8 @@ Sides SideCheck(Antilatency::HardwareExtensionInterface::ICotask cotask) {
 
 std::string sideToString(Sides side) {
     switch (side) {
-    case Sides::TOP: return "TOP";
-    case Sides::BOTTOM: return "BOTTOM";
+    case Sides::Top: return "Top";
+    case Sides::Bottom: return "Bottom";
     case Sides::NoConnection: return "NoConnection";
     case Sides::ShortCircuit: return "ShortCircuit";
     default: return "Unknown";
@@ -67,7 +67,7 @@ IOPins Config(Sides side) {
     IOPins ioPins;
 
     switch (side) {
-    case Sides::TOP:
+    case Sides::Top:
         ioPins.STATUS1 = Antilatency::HardwareExtensionInterface::Interop::Pins::IO6;
         ioPins.STATUS2 = Antilatency::HardwareExtensionInterface::Interop::Pins::IO1;
         ioPins.FUNC1 = Antilatency::HardwareExtensionInterface::Interop::Pins::IO5;
@@ -76,7 +76,7 @@ IOPins Config(Sides side) {
         ioPins.V_AXIS = Antilatency::HardwareExtensionInterface::Interop::Pins::IOA3;
         ioPins.CLICK = Antilatency::HardwareExtensionInterface::Interop::Pins::IO7;
         break;
-    case Sides::BOTTOM:
+    case Sides::Bottom:
         ioPins.STATUS1 = Antilatency::HardwareExtensionInterface::Interop::Pins::IO1;
         ioPins.STATUS2 = Antilatency::HardwareExtensionInterface::Interop::Pins::IO6;
         ioPins.FUNC1 = Antilatency::HardwareExtensionInterface::Interop::Pins::IO2;
@@ -96,25 +96,25 @@ IOPins Config(Sides side) {
 void Run(Antilatency::HardwareExtensionInterface::ICotask cotask, IOPins conf, std::string side) {
     auto ledRed = cotask.createPwmPin(conf.STATUS1, 1000, 0);
     auto ledGreen = cotask.createOutputPin(conf.STATUS2, Antilatency::HardwareExtensionInterface::Interop::PinState::High);
-    auto Haxis = cotask.createAnalogPin(conf.H_AXIS, 10);
-    auto Vaxis = cotask.createAnalogPin(conf.V_AXIS, 10);
-    auto FUNC1 = cotask.createInputPin(conf.FUNC1);
-    auto FUNC2 = cotask.createInputPin(conf.FUNC2);
-    auto CLICK = cotask.createInputPin(conf.CLICK);
+    auto hAxis = cotask.createAnalogPin(conf.H_AXIS, 10);
+    auto vAxis = cotask.createAnalogPin(conf.V_AXIS, 10);
+    auto func1 = cotask.createInputPin(conf.FUNC1);
+    auto func2 = cotask.createInputPin(conf.FUNC2);
+    auto click = cotask.createInputPin(conf.CLICK);
 
     cotask.run();
 
     while (!cotask.isTaskFinished()) {
         std::cout << "Side: " << side << std::endl
-            << "HAxis: " << std::fixed << std::setprecision(2) << std::setw(4) << std::right << std::round(Haxis.getValue() * 100.0) / 100.0
-            << " VAxis: " << std::setw(4) << std::right << std::round(Vaxis.getValue() * 100.0) / 100.0
-            << " FUNC1: " << std::setw(4) << std::right << Antilatency::enumToString(FUNC1.getState())
-            << " FUNC2: " << std::setw(4) << std::right << Antilatency::enumToString(FUNC2.getState())
-            << " CLICK: " << std::setw(4) << std::right << Antilatency::enumToString(CLICK.getState()) << std::endl;
+            << "HAxis: " << std::fixed << std::setprecision(2) << std::setw(4) << std::right << std::round(hAxis.getValue() * 100.0) / 100.0
+            << " VAxis: " << std::setw(4) << std::right << std::round(vAxis.getValue() * 100.0) / 100.0
+            << " func1: " << std::setw(4) << std::right << Antilatency::enumToString(func1.getState())
+            << " func2: " << std::setw(4) << std::right << Antilatency::enumToString(func2.getState())
+            << " click: " << std::setw(4) << std::right << Antilatency::enumToString(click.getState()) << std::endl;
 
-        ledRed.setDuty(Haxis.getValue() * 0.4f);
+        ledRed.setDuty(hAxis.getValue() * 0.4f);
 
-        if (round(Vaxis.getValue() * 100) / 100 >= 2) {
+        if (round(vAxis.getValue() * 100) / 100 >= 2) {
             ledGreen.setState(Antilatency::HardwareExtensionInterface::Interop::PinState::High);
         }
         else {
