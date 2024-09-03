@@ -159,8 +159,11 @@ int main() {
                 break;
             }
         }
-        std::cout << "Nodes count " << supportedNodes.size() << std::endl;
+        if (targetNode == Antilatency::DeviceNetwork::NodeHandle::Null) {
+            std::cerr << "Invalid Tag or device! Expected 'ExBoard'. Please connect the proper device or change the Tag." << std::endl;
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    
     }
 
     auto cotask = cotaskConstructor.startTask(network, targetNode);
