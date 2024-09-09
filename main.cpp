@@ -106,8 +106,8 @@ void Run(Antilatency::HardwareExtensionInterface::ICotask cotask, IOPins conf, s
 
     while (!cotask.isTaskFinished()) {
         std::cout << "Side: " << side << std::endl
-            << "HAxis: " << std::fixed << std::setprecision(2) << std::setw(4) << std::right << std::round(hAxis.getValue() * 100.0) / 100.0
-            << " VAxis: " << std::setw(4) << std::right << std::round(vAxis.getValue() * 100.0) / 100.0
+            << "hAxis: " << std::fixed << std::setprecision(2) << std::setw(4) << std::right << std::round(hAxis.getValue() * 100.0) / 100.0
+            << " vAxis: " << std::setw(4) << std::right << std::round(vAxis.getValue() * 100.0) / 100.0
             << " func1: " << std::setw(4) << std::right << Antilatency::enumToString(func1.getState())
             << " func2: " << std::setw(4) << std::right << Antilatency::enumToString(func2.getState())
             << " click: " << std::setw(4) << std::right << Antilatency::enumToString(click.getState()) << std::endl;
